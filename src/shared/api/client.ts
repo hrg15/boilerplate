@@ -1,10 +1,10 @@
 import axios, { AxiosInstance, AxiosResponse } from "axios";
 import useAuthStore from "../store/auth-store";
-import { BASE_API_URL } from "../../config";
+import { BASE_URL } from "../../../config";
 
 const setToken = useAuthStore.getState().setToken;
 const API_CONFIG = {
-  baseURL: BASE_API_URL,
+  baseURL: BASE_URL,
   timeout: 10000,
   headers: {
     "Content-Type": "application/json",
@@ -24,7 +24,7 @@ apiClient.interceptors.request.use(
   },
   (error) => {
     return Promise.reject(error);
-  }
+  },
 );
 
 apiClient.interceptors.response.use(
@@ -39,7 +39,7 @@ apiClient.interceptors.response.use(
     }
 
     return Promise.reject(error);
-  }
+  },
 );
 
 export default apiClient;

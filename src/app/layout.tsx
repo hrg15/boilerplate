@@ -1,8 +1,8 @@
 import type { Metadata } from "next";
 import { Inter, Vazirmatn } from "next/font/google";
-import "./globals.css";
+import "../shared/styles/globals.css";
 import { BASE_URL } from "../../config";
-import Provider from "@/components/provider";
+import Provider from "@/shared/components/provider";
 
 const inter = Inter({
   subsets: ["vietnamese"],

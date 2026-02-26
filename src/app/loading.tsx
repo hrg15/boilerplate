@@ -1,4 +1,4 @@
-import { DotsLoading } from "@/components/icons/three-dots-loading";
+import { DotsLoading } from "@/shared/icons/three-dots-loading";
 
 export default function Loading() {
   return (
