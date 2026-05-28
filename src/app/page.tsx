@@ -3,7 +3,7 @@ import { Github, ExternalLink, Code2, Package, Rocket } from "lucide-react";
 
 export default function Home() {
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100   font-sans ">
+    <div className="min-h-screen bg-linear-to-br from-slate-50 to-slate-100   font-sans ">
       <div className="container mx-auto max-w-4xl px-8 py-16">
         {/* Header */}
         <header className="mb-16 text-center">
