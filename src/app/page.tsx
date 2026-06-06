@@ -6,14 +6,14 @@ export default function Home() {
     <div className="min-h-screen bg-linear-to-br from-slate-50 to-slate-100 font-sans">
       <div className="container mx-auto max-w-4xl px-8 py-16">
         {/* Header */}
-        <header className="mb-16 text-center">
-          <div className="mb-6 flex justify-center">
+        <header className="mb-16 flex flex-col items-center justify-center text-center">
+          <div className="mb-6 size-40 overflow-hidden rounded-full">
             <Image
               className="overflow-hidden"
               src="/logo.png"
               alt="Boilerplate Logo"
-              width={180}
-              height={38}
+              width={160}
+              height={160}
               priority
             />
           </div>
