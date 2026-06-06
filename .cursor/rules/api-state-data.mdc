@@ -1,0 +1,33 @@
+---
+description: API strategy, request/response types, and async UI state conventions
+globs: "src/shared/api/**/*.ts,src/shared/api/**/*.tsx,src/modules/**/*.ts"
+alwaysApply: false
+---
+
+# API And State Data
+
+## API Strategy
+
+- Ask which API strategy to use when it is not obvious: server `fetch`, Axios client, or TanStack React Query.
+- Use server-side `fetch` for server-rendered route data when possible.
+- Use TanStack React Query for client-side async state, mutations, caching, refetching, and loading/error states.
+- Keep API clients and shared request helpers in `src/shared/api`.
+- Use endpoint paths from `URLs` in `src/shared/api/urls.ts` instead of hardcoding API paths, and add new endpoints there.
+
+## Types And Validation
+
+- Create explicit request, response, and query param types.
+- Do not use `any` for API payloads unless there is no practical alternative and the reason is documented in code.
+- For input validation and Zod schemas at trust boundaries, follow `security-auth`.
+
+## UI States
+
+- Every user-facing request needs loading, error, empty, and success handling as appropriate.
+- Mutations should prevent duplicate submissions and show clear feedback.
+- Prefer project UI components for feedback: Button loading state, Alert, Skeleton, Dialog, or toast via `sonner`.
+
+## Error Handling
+
+- Handle expected errors near the user flow.
+- Let shared clients handle cross-cutting concerns such as auth headers and 401 behavior.
+- Do not swallow errors silently.

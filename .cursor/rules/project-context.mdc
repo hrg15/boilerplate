@@ -1,0 +1,22 @@
+---
+description: Project-wide context, stack, and folder ownership
+alwaysApply: true
+---
+
+# Project Context
+
+This is a Next.js App Router project using React, TypeScript, Tailwind CSS v4, shadcn-style Radix UI components, TanStack React Query, Zustand, Axios, CVA, and `cn()` from `src/shared/lib/utils.ts`.
+
+## Non-Negotiables
+
+- Keep the existing architecture: `src/app` for routes/pages/layouts, `src/modules` for feature/page-specific code, and `src/shared` for reusable components, APIs, hooks, types, icons, stores, styles, and utilities.
+- Reuse project primitives before creating new ones. Check `src/shared/components/ui` for Button, Input, Dialog, Sheet, Card, Table, Badge, Select, etc.
+- Reference main app pages via `ROUTES` in `src/shared/lib/routes.ts` and API endpoints via `URLs` in `src/shared/api/urls.ts` instead of hardcoding paths.
+- Use lowercase kebab-case for folders and files unless the framework requires another convention.
+- Ask before installing packages, adding Framer Motion, changing API strategy, or introducing a new global state/store pattern.
+- Do not add comments or documentation unless requested or the code would otherwise be hard to understand.
+
+## Verification
+
+- Prefer `npm run lint` and `npm run type-check` when the change is broad or touches shared behavior.
+- If a command cannot be run, say so and explain the remaining risk.

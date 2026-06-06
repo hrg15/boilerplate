@@ -1,0 +1,39 @@
+---
+description: Module, shared, and feature folder structure conventions
+globs: "src/modules/**/*.ts, src/modules/**/*.tsx, src/shared/**/*.ts, src/shared/**/*.tsx"
+alwaysApply: false
+---
+
+# Feature Structure
+
+## Ownership
+
+- Put feature/page-specific code in `src/modules/<feature>`.
+- Put cross-feature code in `src/shared`.
+- Do not import from one module into another module unless the imported code is truly shared. Move shared code to `src/shared` first.
+
+## Recommended Module Shape
+
+- `components/` for feature UI.
+- `types.ts` for feature-specific types.
+- `constants.ts` for repeated static data/options.
+- `hooks/` for feature-specific hooks when needed.
+- `store/` only when feature state must be shared across multiple components and a store is needed.
+
+## Component Boundaries
+
+- Keep components focused on one responsibility.
+- Extract large sections, repeated cards, filters, sidebars, and dialogs into named components.
+- Keep page-level composition readable: data in, sections out.
+- Prefer collocating small helpers with the component until they become reusable.
+
+## Naming
+
+- Files and folders use lowercase kebab-case (e.g. `question-card.tsx`, `components/auth-wizard`).
+- React components are PascalCase, and a single-component file's name matches its component (`question-card.tsx` exports `QuestionCard`).
+- Hooks start with `use` and live in camelCase files prefixed with `use-` (e.g. `use-questions.ts` exporting `useQuestions`).
+- Event handlers use the `handle` prefix (`handleClick`, `handleSubmit`); props that pass them through use the `on` prefix (`onClick`).
+- Types and interfaces are PascalCase; prefer explicit names like `QuestionCardProps` over generic ones.
+- Exported constant objects/maps are UPPER_SNAKE or descriptive PascalCase (`ROUTES`, `URLs`); local constants stay camelCase.
+- Boolean variables read as predicates (`isLoading`, `hasError`, `canSubmit`).
+- Constants should use descriptive names and stay near their owner unless shared.

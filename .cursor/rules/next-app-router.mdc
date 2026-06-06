@@ -1,0 +1,28 @@
+---
+description: Next.js App Router page, layout, metadata, and data-fetching conventions
+globs: "src/app/**/*.tsx"
+alwaysApply: false
+---
+
+# Next.js App Router
+
+## Pages And Layouts
+
+- Keep route files thin. `page.tsx` and `layout.tsx` should compose sections from `src/modules` or `src/shared`, not contain large UI or business logic.
+- Export route components as a function named: `Page`, `Layout`, `Loading`, or `NotFound` with PascalCase where possible.
+- Use Server Components by default. Add `"use client"` only when the file needs state, effects, event handlers, browser APIs, or client-only hooks.
+- Split complex pages into clear sections/components under the relevant `src/modules/<feature>/components` folder.
+
+## Data And Rendering
+
+- Use the built-in `fetch` API for server-side requests in route components.
+- Avoid client fetching in route components unless the UX requires client state or live interactions.
+- Render mode (SSG/SSR/ISR/dynamic), cache/revalidate behavior, and the Metadata API are covered in `performance-seo`. Follow that rule when choosing freshness and SEO behavior for a route.
+
+## Navigation
+
+- Use `ROUTES` from `src/shared/lib/routes.ts` for links to main app pages instead of hardcoding paths. Add a new entry there when a new top-level route is introduced.
+
+## Tooling
+
+- When you need Next.js framework or API documentation, or runtime info about the running app, you may use the Next.js DevTools MCP (`Next Devtools`).

@@ -1,0 +1,25 @@
+---
+description: Use when changing authentication, authorization, tokens, cookies, protected routes, forms, or user-submitted data
+alwaysApply: false
+---
+
+# Security And Auth
+
+## Authentication
+
+- Keep token, cookie, and auth state behavior centralized in the existing auth/store/API client patterns.
+- Do not duplicate auth header logic outside the shared API client unless server-side `fetch` requires an explicit equivalent.
+- Treat 401/403 behavior as a shared concern and keep user-facing redirects or messages consistent.
+
+## Input And Validation
+
+- Validate all user-controlled input before trusting it.
+- Use typed payloads and Zod schemas when data crosses a boundary: forms, route params, search params, API responses, or mutations.
+- Never trust client-only validation for security decisions.
+
+## Secrets And Safe Defaults
+
+- Never hardcode secrets, tokens, private keys, or production credentials.
+- Do not log sensitive values.
+- Prefer secure cookies and least-privilege data access.
+- Ask before changing auth architecture, persistence strategy, cookie names, or token refresh behavior.

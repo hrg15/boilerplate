@@ -1,0 +1,32 @@
+---
+description: UI, component reuse, Tailwind, and accessibility conventions
+globs: "**/*.tsx"
+alwaysApply: false
+---
+
+# UI Design System
+
+## Components
+
+- Use existing UI primitives from `src/shared/components/ui` before creating new styled elements.
+- Do not recreate components that already exist as shadcn primitives (Button, Input, Dialog, Sheet, Popover, Card, Table, Badge, Select, Textarea, Checkbox, Tabs, Tooltip, Pagination, etc.).
+- Use component variants (`variant`, `size`) before adding one-off Tailwind overrides.
+- If a reusable UI pattern appears more than once, move it to `src/shared/components` or the owning module's `components` folder.
+
+## Styling
+
+- Use semantic tokens from `src/shared/styles/globals.css` such as `bg-primary`, `text-title`, `text-muted-foreground`, `bg-background`, `text-primary-foreground`, `text-secondary`, `border-border`, `bg-success`, and `text-destructive`.
+- Palette scales are available as `raspberry-*`, `coral-*`, `neutral-*`, `green-*`, and `red-*` utilities mapped from the Figma tokens.
+- Use `cn()` for conditional classes instead of ternaries or string concatenation inside `className`.
+- Prefer `gap-*` over `space-x-*` / `space-y-*`.
+- Avoid long one-off `className` strings; extract repeated utility combinations into a shared class, variant, or small component.
+- For nested groups such as lists, prefer one parent class with child selectors (e.g. `[&>*]:...`) over repeating the same classes on every child.
+- Prefer `size-*` when width and height are equal.
+- Avoid inline styles and raw color utilities unless no existing token/variant fits.
+
+## Accessibility
+
+- Use semantic HTML first.
+- Interactive non-button elements need keyboard support, focus styles, and ARIA labels when the visible label is not enough.
+- Dialog, Sheet, Drawer, and Popover-like components need accessible titles/labels.
+- Loading buttons should be disabled or otherwise prevent duplicate submissions.

@@ -1,0 +1,26 @@
+---
+description: Always-on implementation workflow and code quality guardrails
+alwaysApply: true
+---
+
+# Agent Workflow
+
+## Before Editing
+
+- Read the relevant existing files first and follow the local pattern.
+- If requirements are unclear, ask a focused question before writing code.
+- If there may not be one correct answer, say so and explain the tradeoff.
+
+## Implementation Style
+
+- Prefer simple, readable code over clever abstractions.
+- Use descriptive names. Event handlers should use the `handle` prefix, such as `handleClick`, `handleSubmit`, or `handleKeyDown`.
+- Use early returns and guard clauses for invalid states.
+- Avoid large files and deeply nested logic. Extract reusable UI, hooks, helpers, constants, or types when a component becomes hard to scan.
+- For repetitive UI/data, define an array or constant and map over it instead of duplicating markup.
+- Prefer typed `const` arrow functions for local callbacks and helpers. Use function declarations only for pages and when they fit the existing file style or framework convention.
+
+## Review
+
+- Cover loading, empty, and error states for user-facing flows (see `api-state-data` for specifics).
+- Keep security, validation, and accessibility in the implementation, not as afterthoughts.

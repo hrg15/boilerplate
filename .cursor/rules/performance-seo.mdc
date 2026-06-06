@@ -1,0 +1,26 @@
+---
+description: Use when optimizing performance, rendering, bundle size, SEO, metadata, images, or public pages
+alwaysApply: false
+---
+
+# Performance And SEO
+
+## Performance
+
+- Prefer Server Components and server data fetching when interactivity is not needed.
+- Use dynamic imports only for heavy or rarely used client components, not as a default.
+- Avoid unnecessary client boundaries, effects, and global state.
+- Keep repeated expensive computations in helpers, constants, memoized values, or server code based on where they run.
+- Optimize lists by extracting stable item components when rendering becomes expensive or complex.
+
+## Rendering
+
+- Choose SSG, SSR, ISR, or client rendering intentionally.
+- Set `cache`, `next.revalidate`, or `dynamic` behavior explicitly when data freshness matters.
+- Do not fetch the same data in multiple layers of the same route unless required.
+
+## SEO
+
+- Use the Next.js Metadata API for indexable pages.
+- Keep page titles, descriptions, headings, and Open Graph fields aligned with the actual page content.
+- Use semantic headings and avoid skipping heading levels in public content pages.
