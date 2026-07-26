@@ -17,6 +17,7 @@ alwaysApply: false
 
 - Use semantic tokens from `src/shared/styles/globals.css` such as `bg-primary`, `text-title`, `text-muted-foreground`, `bg-background`, `text-primary-foreground`, `text-secondary`, `border-border`, `bg-success`, and `text-destructive`.
 - Palette scales are available as `raspberry-*`, `coral-*`, `neutral-*`, `green-*`, and `red-*` utilities mapped from the Figma tokens.
+- Prefer Tailwind's built-in utility classes over arbitrary values; use a default class when one exists (e.g. `container` instead of `max-w-[1280px]`, `inset-0` instead of `top-[0px] left-[0px]`, `mt-4` instead of `mt-[16px]`). Reach for arbitrary values like `w-[]` or `max-w-[]` only when no default utility or token fits.
 - Use `cn()` for conditional classes instead of ternaries or string concatenation inside `className`.
 - Prefer `gap-*` over `space-x-*` / `space-y-*`.
 - Avoid long one-off `className` strings; extract repeated utility combinations into a shared class, variant, or small component.

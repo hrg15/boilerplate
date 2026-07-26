@@ -1,27 +1,49 @@
-import { AxiosError } from "axios";
-import { QueryClient } from "@tanstack/react-query";
+import {
+  defaultShouldDehydrateQuery,
+  isServer,
+  QueryClient,
+} from "@tanstack/react-query";
+import { isApiError } from "./api-error";
 
-export const queryClient = new QueryClient({
-  defaultOptions: {
-    queries: {
-      retry: (failureCount, error) => {
-        if (
-          error instanceof AxiosError &&
-          error.response?.status &&
-          error.response?.status >= 500
-        ) {
-          return false;
-        }
+const MAX_RETRIES = 3;
+const DEFAULT_STALE_TIME = 60 * 1000;
 
-        if (error instanceof AxiosError && error.response?.status === 401) {
-          return false;
-        }
+export const makeQueryClient = () =>
+  new QueryClient({
+    defaultOptions: {
+      queries: {
+        staleTime: DEFAULT_STALE_TIME,
+        retry: (failureCount, error) => {
+          if (failureCount >= MAX_RETRIES) {
+            return false;
+          }
 
-        if (failureCount >= 3) {
-          return false;
-        }
-        return true;
+          return isApiError(error) ? error.isRetryable : false;
+        },
+      },
+      mutations: {
+        retry: false,
+      },
+      dehydrate: {
+        shouldDehydrateQuery: (query) =>
+          defaultShouldDehydrateQuery(query) ||
+          query.state.status === "pending",
       },
     },
-  },
-});
+  });
+
+let browserQueryClient: QueryClient | undefined;
+
+/**
+ * On the server a fresh client is returned per render so no cache is shared
+ * between requests. In the browser the same client is reused across renders.
+ */
+export const getQueryClient = () => {
+  if (isServer) {
+    return makeQueryClient();
+  }
+
+  browserQueryClient ??= makeQueryClient();
+
+  return browserQueryClient;
+};
