@@ -1,27 +1,50 @@
+import {
+  QueryClient,
+  defaultShouldDehydrateQuery,
+  isServer,
+} from "@tanstack/react-query";
 import { AxiosError } from "axios";
-import { QueryClient } from "@tanstack/react-query";
+import { isApiHttpError } from "./api-error";
 
-export const queryClient = new QueryClient({
-  defaultOptions: {
-    queries: {
-      retry: (failureCount, error) => {
-        if (
-          error instanceof AxiosError &&
-          error.response?.status &&
-          error.response?.status >= 500
-        ) {
-          return false;
-        }
+const makeQueryClient = () =>
+  new QueryClient({
+    defaultOptions: {
+      queries: {
+        staleTime: 60 * 1000,
+        retry: (failureCount, error) => {
+          if (isApiHttpError(error)) {
+            if (error.status === 401 || error.status >= 500) return false;
+          }
 
-        if (error instanceof AxiosError && error.response?.status === 401) {
-          return false;
-        }
+          if (error instanceof AxiosError) {
+            const status = error.response?.status;
+            if (status === 401 || (status !== undefined && status >= 500)) {
+              return false;
+            }
+          }
 
-        if (failureCount >= 3) {
-          return false;
-        }
-        return true;
+          return failureCount < 3;
+        },
+      },
+      dehydrate: {
+        shouldDehydrateQuery: (query) =>
+          defaultShouldDehydrateQuery(query) ||
+          query.state.status === "pending",
       },
     },
-  },
-});
+  });
+
+let browserQueryClient: QueryClient | undefined;
+
+/**
+ * Fresh QueryClient per server request (avoids cross-user cache leaks).
+ * Singleton only in the browser.
+ */
+export const getQueryClient = () => {
+  if (isServer) {
+    return makeQueryClient();
+  }
+
+  browserQueryClient ??= makeQueryClient();
+  return browserQueryClient;
+};

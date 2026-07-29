@@ -8,11 +8,11 @@ alwaysApply: false
 
 ## API Strategy
 
-- Ask which API strategy to use when it is not obvious: server `fetch`, Axios client, or TanStack React Query.
-- Use server-side `fetch` for server-rendered route data when possible.
-- Use TanStack React Query for client-side async state, mutations, caching, refetching, and loading/error states.
-- Keep API clients and shared request helpers in `src/shared/api`.
-- Use endpoint paths from `URLs` in `src/shared/api/urls.ts` instead of hardcoding API paths, and add new endpoints there.
+- Server / SEO / ISR: `serverFetch` (`src/shared/api/http/server.ts`) + `*/server.ts`.
+- Client: Axios (`src/shared/api/client.ts`) + React Query hooks.
+- Resource layout: `types.ts`, `server.ts`, `hooks/use-*.ts` (request + hook in the same file).
+- Use `URLs` from `src/shared/api/urls.ts`. Use `getQueryClient()` (per-request on server).
+- Handle `ApiHttpError` / `isNotFoundError` near pages for `notFound()`.
 
 ## Types And Validation
 
