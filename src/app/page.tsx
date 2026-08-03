@@ -1,5 +1,6 @@
 import Image from "next/image";
 import { Github, ExternalLink, Code2, Package, Rocket } from "lucide-react";
+import { FolderTree } from "@/modules/home/components/folder-tree";
 
 export default function Home() {
   return (
@@ -107,6 +108,17 @@ export default function Home() {
               </div>
             </div>
           </div>
+        </div>
+
+        {/* Folder Structure */}
+        <div className="mb-16 rounded-lg bg-white p-8 shadow-md dark:bg-slate-800">
+          <h2 className="mb-2 text-center text-2xl font-bold text-slate-900 dark:text-slate-100">
+            Project Structure
+          </h2>
+          <p className="mb-6 text-center text-slate-600 dark:text-slate-400">
+            A clean, scalable architecture organized by feature modules and shared utilities.
+          </p>
+          <FolderTree />
         </div>
 
         {/* CTA Section */}

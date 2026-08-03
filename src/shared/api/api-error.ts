@@ -12,7 +12,13 @@ export class ApiHttpError extends Error {
   readonly path: string;
   readonly body: unknown;
 
-  constructor({ status, statusText = "", path, body, message }: ApiHttpErrorInit) {
+  constructor({
+    status,
+    statusText = "",
+    path,
+    body,
+    message,
+  }: ApiHttpErrorInit) {
     super(message ?? resolveErrorMessage(status, body) ?? `HTTP ${status}`);
     this.name = "ApiHttpError";
     this.status = status;
@@ -31,7 +37,10 @@ export const isNotFoundError = (error: unknown): boolean =>
 export const isUnauthorizedError = (error: unknown): boolean =>
   isApiHttpError(error) && error.status === 401;
 
-const resolveErrorMessage = (status: number, body: unknown): string | undefined => {
+const resolveErrorMessage = (
+  status: number,
+  body: unknown,
+): string | undefined => {
   if (!body || typeof body !== "object") return undefined;
 
   if ("message" in body && typeof body.message === "string") {
