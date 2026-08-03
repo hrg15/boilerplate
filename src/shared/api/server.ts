@@ -1,5 +1,5 @@
 import { cookies } from "next/headers";
-import { ApiError } from "./api-error";
+import { ApiHttpError } from "./api-error";
 import { buildUrl } from "./build-url";
 import { QueryParams } from "./types";
 
@@ -65,11 +65,11 @@ export const serverFetch = async <T>(
       signal: signal ?? AbortSignal.timeout(timeout),
     });
   } catch (error) {
-    throw ApiError.fromNetwork(error);
+    throw ApiHttpError.fromNetwork(error, path);
   }
 
   if (!response.ok) {
-    throw await ApiError.fromResponse(response);
+    throw await ApiHttpError.fromResponse(response, path);
   }
 
   if (response.status === 204) {

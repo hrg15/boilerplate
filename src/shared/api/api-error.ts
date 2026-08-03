@@ -26,6 +26,38 @@ export class ApiHttpError extends Error {
     this.path = path;
     this.body = body ?? null;
   }
+
+  static async fromResponse(response: Response, path: string) {
+    let body: unknown = null;
+    try {
+      body = await response.json();
+    } catch {
+      body = null;
+    }
+
+    return new ApiHttpError({
+      status: response.status,
+      statusText: response.statusText,
+      path,
+      body,
+    });
+  }
+
+  static fromNetwork(error: unknown, path: string) {
+    const isTimeout = error instanceof Error && error.name === "TimeoutError";
+
+    return new ApiHttpError({
+      status: isTimeout ? 408 : 0,
+      statusText: isTimeout ? "Request Timeout" : "Network Error",
+      path,
+      message:
+        error instanceof Error
+          ? error.message
+          : isTimeout
+            ? "Request timed out"
+            : "Network request failed",
+    });
+  }
 }
 
 export const isApiHttpError = (error: unknown): error is ApiHttpError =>
