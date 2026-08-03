@@ -60,7 +60,7 @@ function TreeItem({ node, depth = 0 }: { node: TreeNode; depth?: number }) {
   return (
     <Collapsible.Root open={open} onOpenChange={setOpen}>
       <Collapsible.Trigger
-        className="group flex w-full items-center gap-2 rounded-md px-2 py-1 text-sm font-medium text-slate-800 hover:bg-slate-100 dark:text-slate-200 dark:hover:bg-slate-800"
+        className="group flex w-full cursor-pointer items-center gap-2 rounded-md px-2 py-1 text-sm font-medium text-slate-800 hover:bg-slate-100 dark:text-slate-200 dark:hover:bg-slate-800"
         style={{ paddingLeft: indent + 8 }}
       >
         <ChevronRight
@@ -122,6 +122,11 @@ const TREE: TreeNode[] = [
             name: "home/",
             type: "folder",
             children: [
+              {
+                name: "components/",
+                type: "folder",
+                children: [{ name: "folder-tree.tsx", type: "file", description: "This component" }],
+              },
               { name: "types.ts", type: "file" },
               { name: "utils.ts", type: "file" },
             ],
@@ -139,16 +144,36 @@ const TREE: TreeNode[] = [
             type: "folder",
             description: "API layer",
             children: [
+              { name: "api-error.ts", type: "file", description: "Error classes" },
+              { name: "build-url.ts", type: "file", description: "URL builder" },
               { name: "client.ts", type: "file", description: "Axios client" },
               { name: "query-client.ts", type: "file", description: "React Query setup" },
-              { name: "urls.ts", type: "file", description: "API base URLs" },
+              { name: "server.ts", type: "file", description: "Server fetch" },
+              { name: "types.ts", type: "file" },
+              { name: "urls.ts", type: "file", description: "API endpoints" },
               {
-                name: "users/",
+                name: "http/",
+                type: "folder",
+                children: [
+                  { name: "server.ts", type: "file", description: "Next.js server fetch" },
+                ],
+              },
+              {
+                name: "properties/",
                 type: "folder",
                 children: [
                   { name: "types.ts", type: "file" },
-                  { name: "use-user.ts", type: "file", description: "React Query hook" },
-                  { name: "users.ts", type: "file", description: "Fetcher functions" },
+                  { name: "server.ts", type: "file" },
+                  {
+                    name: "hooks/",
+                    type: "folder",
+                    children: [
+                      { name: "use-properties.ts", type: "file" },
+                      { name: "use-properties-map.ts", type: "file" },
+                      { name: "use-property.ts", type: "file" },
+                      { name: "use-property-mutations.ts", type: "file" },
+                    ],
+                  },
                 ],
               },
             ],
@@ -161,14 +186,18 @@ const TREE: TreeNode[] = [
               {
                 name: "ui/",
                 type: "folder",
-                description: "Shadcn UI components",
+                description: "shadcn/ui components",
                 children: [
                   { name: "accordion.tsx", type: "file" },
                   { name: "button.tsx", type: "file" },
+                  { name: "checkbox.tsx", type: "file" },
+                  { name: "combobox.tsx", type: "file" },
                   { name: "dialog.tsx", type: "file" },
+                  { name: "drawer.tsx", type: "file" },
+                  { name: "dropdown-menu.tsx", type: "file" },
                   { name: "input.tsx", type: "file" },
                   { name: "select.tsx", type: "file" },
-                  { name: "…and more", type: "file" },
+                  { name: "spinner.tsx", type: "file" },
                 ],
               },
             ],
@@ -182,6 +211,11 @@ const TREE: TreeNode[] = [
             name: "hooks/",
             type: "folder",
             children: [{ name: "use-copy.ts", type: "file" }],
+          },
+          {
+            name: "icons/",
+            type: "folder",
+            children: [{ name: "three-dots-loading.tsx", type: "file" }],
           },
           {
             name: "lib/",

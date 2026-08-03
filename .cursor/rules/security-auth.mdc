@@ -7,14 +7,17 @@ alwaysApply: false
 
 ## Authentication
 
-- Keep token, cookie, and auth state behavior centralized in the existing auth/store/API client patterns.
-- Do not duplicate auth header logic outside the shared API client unless server-side `fetch` requires an explicit equivalent.
+- Auth is client-side. `useAuthStore` (`src/shared/store/auth-store.ts`) holds the token, and the Axios client (`src/shared/api/client.ts`) attaches it as a `Bearer` header in a request interceptor and clears it on 401.
+- Keep token and auth state behavior in those two files. Do not duplicate auth header logic in feature code, hooks, or module API files.
+- The server side is the backend's responsibility. The backend may set and validate its own httpOnly cookie; the frontend does not read, write, or forward it.
+- Do not call `cookies()` or send credentials from `server.ts` request functions. Server fetching stays unauthenticated so routes remain SSG/ISR-capable.
+- Render authenticated UI on the client. If server-rendered per-user data is unavoidable, flag the loss of static rendering and confirm before implementing.
 - Treat 401/403 behavior as a shared concern and keep user-facing redirects or messages consistent.
 
 ## Input And Validation
 
-- Validate all user-controlled input before trusting it.
-- Use typed payloads and Zod schemas when data crosses a boundary: forms, route params, search params, API responses, or mutations.
+- Validate all user-controlled input before trusting it, especially where data crosses a boundary: forms, route params, search params, API responses, and mutations.
+- Use typed payloads and explicit narrowing. No schema library is installed; ask before adding Zod or similar.
 - Never trust client-only validation for security decisions.
 
 ## Secrets And Safe Defaults

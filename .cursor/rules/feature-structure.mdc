@@ -8,8 +8,8 @@ alwaysApply: false
 
 ## Ownership
 
-- Put feature/page-specific code in `src/modules/<feature>`.
-- Put cross-feature code in `src/shared`.
+- Treat each page as a module. A module owns everything only it uses, including its API calls, and lives in `src/modules/<feature>`.
+- Put cross-feature code in `src/shared`. Promote an API resource to `src/shared/api/<resource>` only once a second module needs it (e.g. a search endpoint used by home, listing, and details).
 - Do not import from one module into another module unless the imported code is truly shared. Move shared code to `src/shared` first.
 
 ## Recommended Module Shape
@@ -17,9 +17,11 @@ alwaysApply: false
 - `components/` for feature UI.
 - Group components by the page/route they belong to inside `components/`. When a module has nested routes (e.g. `/properties` and `/properties/[slug]`), give each route its own subfolder (`components/properties/`, `components/property-details/`) so it is clear which page each component serves. Keep components shared across those routes in a `components/shared/` (or `components/common/`) subfolder.
 - For large features, split `components/` into per-section or per-page subfolders instead of a single flat folder, so the structure stays scannable.
+- `api/` for endpoints only this module uses, following the resource shape in `api-state-data` (`types.ts`, `server.ts`, `hooks/use-*.ts`).
 - `types.ts` for feature-specific types.
+- `utils.ts` for feature-specific pure helpers.
 - `constants.ts` for repeated static data/options.
-- `hooks/` for feature-specific hooks when needed.
+- `hooks/` for feature-specific hooks that are not tied to a request.
 - `store/` only when feature state must be shared across multiple components and a store is needed.
 
 ## Component Boundaries

@@ -19,23 +19,21 @@ const useAuthStore = create<IState>()(
           token: "",
           refreshToken: "",
 
-          setToken: (token: string) => {
+          setToken: (token: string) =>
             set(
               (state) => {
                 state.token = token;
               },
               false,
               "setToken",
-            );
-            document.cookie = `auth-token=${token}; path=/; secure; samesite=strict`;
-          },
+            ),
           setRefreshToken: (token: string) =>
             set(
               (state) => {
                 state.refreshToken = token;
               },
               false,
-              "setToken",
+              "setRefreshToken",
             ),
         }),
         { name: STORE_NAME },

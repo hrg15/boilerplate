@@ -8,15 +8,15 @@ alwaysApply: false
 
 ## Components
 
-- Use existing UI primitives from `src/shared/components/ui` before creating new styled elements.
-- Do not recreate components that already exist as shadcn primitives (Button, Input, Dialog, Sheet, Popover, Card, Table, Badge, Select, Textarea, Checkbox, Tabs, Tooltip, Pagination, etc.).
+- Use existing UI primitives from `src/shared/components/ui` before creating new styled elements. Currently available: `accordion`, `button`, `checkbox`, `combobox`, `dialog`, `drawer`, `dropdown-menu`, `empty`, `input`, `input-group`, `popover`, `progress`, `resizable`, `select`, `slider`, `spinner`, `textarea`.
+- If a primitive is missing (Card, Table, Badge, Tabs, Tooltip, Pagination, etc.), add it via the shadcn CLI/registry in the project's `new-york` style instead of hand-rolling a one-off component.
 - Use component variants (`variant`, `size`) before adding one-off Tailwind overrides.
 - If a reusable UI pattern appears more than once, move it to `src/shared/components` or the owning module's `components` folder.
 
 ## Styling
 
-- Use semantic tokens from `src/shared/styles/globals.css` such as `bg-primary`, `text-title`, `text-muted-foreground`, `bg-background`, `text-primary-foreground`, `text-secondary`, `border-border`, `bg-success`, and `text-destructive`.
-- Palette scales are available as `raspberry-*`, `coral-*`, `neutral-*`, `green-*`, and `red-*` utilities mapped from the Figma tokens.
+- Use semantic tokens from `src/shared/styles/globals.css` such as `bg-primary`, `bg-primary-deep`, `text-title`, `text-muted-foreground`, `bg-background`, `text-primary-foreground`, `text-secondary`, `border-border`, `bg-success`, `bg-success-muted`, and `text-destructive`.
+- Palette scales are available as `stone-*`, `neutral-*`, `green-*`, `red-*`, and `gray-*` (aliased to `neutral-*`) utilities in the `@theme` block.
 - Prefer Tailwind's built-in utility classes over arbitrary values; use a default class when one exists (e.g. `container` instead of `max-w-[1280px]`, `inset-0` instead of `top-[0px] left-[0px]`, `mt-4` instead of `mt-[16px]`). Reach for arbitrary values like `w-[]` or `max-w-[]` only when no default utility or token fits.
 - Use `cn()` for conditional classes instead of ternaries or string concatenation inside `className`.
 - Prefer `gap-*` over `space-x-*` / `space-y-*`.
@@ -29,5 +29,5 @@ alwaysApply: false
 
 - Use semantic HTML first.
 - Interactive non-button elements need keyboard support, focus styles, and ARIA labels when the visible label is not enough.
-- Dialog, Sheet, Drawer, and Popover-like components need accessible titles/labels.
+- Dialog, Drawer, and Popover-like components need accessible titles/labels.
 - Loading buttons should be disabled or otherwise prevent duplicate submissions.

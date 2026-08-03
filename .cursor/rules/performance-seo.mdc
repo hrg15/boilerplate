@@ -15,12 +15,14 @@ alwaysApply: false
 
 ## Rendering
 
-- Choose SSG, SSR, ISR, or client rendering intentionally.
+- Choose SSG, SSR, ISR, or client rendering intentionally. Default to static or ISR for public pages.
 - Set `cache`, `next.revalidate`, or `dynamic` behavior explicitly when data freshness matters.
+- Avoid `cookies()`, `headers()`, and other dynamic APIs in pages that should stay static. Move per-user data into client components instead of making a whole route dynamic.
 - Do not fetch the same data in multiple layers of the same route unless required.
 
 ## SEO
 
 - Use the Next.js Metadata API for indexable pages.
 - Keep page titles, descriptions, headings, and Open Graph fields aligned with the actual page content.
+- Register new indexable routes in `src/app/sitemap.ts`, and keep `src/app/robots.ts` and `src/app/manifest.ts` in sync when route structure or branding changes.
 - Use semantic headings and avoid skipping heading levels in public content pages.

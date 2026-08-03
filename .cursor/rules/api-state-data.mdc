@@ -1,6 +1,6 @@
 ---
 description: API strategy, request/response types, and async UI state conventions
-globs: "src/shared/api/**/*.ts,src/shared/api/**/*.tsx,src/modules/**/*.ts"
+globs: "src/shared/api/**/*.ts,src/shared/api/**/*.tsx,src/modules/**/api/**/*.ts,src/modules/**/*.ts"
 alwaysApply: false
 ---
 
@@ -8,23 +8,34 @@ alwaysApply: false
 
 ## API Strategy
 
-- Server / SEO / ISR: `serverFetch` (`src/shared/api/http/server.ts`) + `*/server.ts`.
-- Client: Axios (`src/shared/api/client.ts`) + React Query hooks.
-- Resource layout: `types.ts`, `server.ts`, `hooks/use-*.ts` (request + hook in the same file).
-- Use `URLs` from `src/shared/api/urls.ts`. Use `getQueryClient()` (per-request on server).
-- Handle `ApiHttpError` / `isNotFoundError` near pages for `notFound()`.
+- A page is a module. By default a module's API calls live with the module in `src/modules/<feature>/api/`, next to its components, types, and hooks.
+- Promote a resource to `src/shared/api/<resource>/` only when more than one module consumes it (for example a search endpoint used by home, listing, and details). Do not put single-module endpoints in `src/shared`.
+- Resource layout is the same in both places: `types.ts`, `server.ts`, and `hooks/use-*.ts` with the request function and its hook in the same file. `src/shared/api/properties` is the reference shape.
+- The transport layer always stays shared: `serverFetch` (`src/shared/api/http/server.ts`), the Axios instance (`src/shared/api/client.ts`), `getQueryClient()`, `ApiHttpError`, and `URLs`. Modules import these, they never create their own client.
+- Server / SEO / ISR: call `serverFetch` from the resource's `server.ts`. Pass `cache`, `revalidate`, or `tags` explicitly when freshness matters.
+- Client: use the Axios instance inside React Query hooks marked `"use client"`.
+- Use `URLs` from `src/shared/api/urls.ts` for every endpoint path, including module-owned resources, so paths stay in one place.
+- Query keys are tuples starting with the resource name, e.g. `["properties", params]`.
+- Handle `ApiHttpError` and the `isNotFoundError` / `isUnauthorizedError` guards from `src/shared/api/api-error.ts` near pages, e.g. to call `notFound()`.
+
+## Auth And Cacheability
+
+- Server requests must stay cookie-free by default. Do not call `cookies()` or forward credentials in `server.ts` functions — that would opt the route out of SSG/ISR.
+- Public and cacheable data (listings, details, search, marketing content) is fetched on the server without auth, so pages remain statically renderable.
+- Authenticated data is a client-side concern: fetch it through the Axios client, which attaches the `Bearer` token from the auth store. The backend may also set its own httpOnly cookie and handle that session itself; the frontend does not read or manage it.
+- If a route genuinely needs per-user data during server rendering, treat losing static rendering as a deliberate decision and confirm it before implementing.
 
 ## Types And Validation
 
-- Create explicit request, response, and query param types.
+- Create explicit request, response, and query param types in the resource's `types.ts`.
 - Do not use `any` for API payloads unless there is no practical alternative and the reason is documented in code.
-- For input validation and Zod schemas at trust boundaries, follow `security-auth`.
+- No schema validation library is installed. Validate untrusted input with typed narrowing helpers, and ask before adding Zod or a similar dependency. See `security-auth` for trust boundaries.
 
 ## UI States
 
 - Every user-facing request needs loading, error, empty, and success handling as appropriate.
 - Mutations should prevent duplicate submissions and show clear feedback.
-- Prefer project UI components for feedback: Button loading state, Alert, Skeleton, Dialog, or toast via `sonner`.
+- Prefer project UI components for feedback: `Spinner`, `Progress`, `Empty` for the empty state, `Dialog`, or a toast via `sonner`.
 
 ## Error Handling
 
