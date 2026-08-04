@@ -1,12 +1,3 @@
 {
-  "env": {
-    "ANTHROPIC_API_KEY": "fe_oa_1c4d35218bbc37b44e963ea29e2f15dd21e79f17fd42c931",
-    "ANTHROPIC_BASE_URL": "https://cc.freemodel.dev",
-    "CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC": "1"
-  },
-  "permissions": {
-    "allow": [],
-    "deny": []
-  },
-  "apiKeyHelper": "echo 'fe_oa_1c4d35218bbc37b44e963ea29e2f15dd21e79f17fd42c931'"
+  "note": "REDACTED: sensitive information removed. If this file contained private keys or tokens, rotate them immediately and follow GitHub's guidance for removing secrets from repository history: https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/removing-sensitive-data-from-a-repository\n\nThis file has been sanitized to prevent further exposure."
 }
