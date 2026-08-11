@@ -17,10 +17,10 @@
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "lucide-react": "^0.544.0",
-    "next": "16.2.6",
+    "next": "16.2.12",
     "radix-ui": "^1.5.0",
-    "react": "19.2.6",
-    "react-dom": "19.2.6",
+    "react": "19.2.8",
+    "react-dom": "19.2.8",
     "react-resizable-panels": "^4.11.2",
     "sonner": "^2.0.7",
     "tailwind-merge": "^3.3.1",
@@ -31,10 +31,10 @@
     "@eslint/eslintrc": "^3",
     "@tailwindcss/postcss": "^4.3.0",
     "@types/node": "^20",
-    "@types/react": "19.2.15",
-    "@types/react-dom": "19.2.3",
-    "eslint": "^9.39.4",
-    "eslint-config-next": "^16.2.6",
+    "@types/react": "19.2.18",
+    "@types/react-dom": "19.2.4",
+    "eslint": "10.8.1",
+    "eslint-config-next": "16.2.12",
     "postcss": "^8.5.6",
     "prettier": "^3.6.2",
     "prettier-plugin-tailwindcss": "^0.8.0",
@@ -43,7 +43,7 @@
     "typescript": "^5"
   },
   "overrides": {
-    "@types/react": "19.2.15",
-    "@types/react-dom": "19.2.3"
+    "@types/react": "19.2.18",
+    "@types/react-dom": "19.2.4"
   }
 }
