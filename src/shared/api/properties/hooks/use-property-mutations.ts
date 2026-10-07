@@ -3,6 +3,7 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import apiClient from "../../client";
 import { URLs } from "../../urls";
+import { propertyKeys } from "../keys";
 import type {
   CreatePropertyInput,
   PropertyResponse,
@@ -35,7 +36,7 @@ export const useCreateProperty = () => {
   return useMutation({
     mutationFn: createProperty,
     onSuccess: () => {
-      void queryClient.invalidateQueries({ queryKey: ["properties"] });
+      void queryClient.invalidateQueries({ queryKey: propertyKeys.all });
     },
   });
 };
@@ -46,7 +47,7 @@ export const useUpdateProperty = (id: string) => {
   return useMutation({
     mutationFn: (input: UpdatePropertyInput) => updateProperty(id, input),
     onSuccess: () => {
-      void queryClient.invalidateQueries({ queryKey: ["properties"] });
+      void queryClient.invalidateQueries({ queryKey: propertyKeys.all });
     },
   });
 };
@@ -57,7 +58,7 @@ export const useDeleteProperty = () => {
   return useMutation({
     mutationFn: deleteProperty,
     onSuccess: () => {
-      void queryClient.invalidateQueries({ queryKey: ["properties"] });
+      void queryClient.invalidateQueries({ queryKey: propertyKeys.all });
     },
   });
 };

@@ -1,6 +1,6 @@
 ---
-description: UI, component reuse, Tailwind, and accessibility conventions
-globs: "**/*.tsx"
+description: UI, component reuse, Tailwind, theming, RTL, and accessibility conventions
+globs: "**/*.tsx,src/shared/styles/**/*.css"
 alwaysApply: false
 ---
 
@@ -9,25 +9,33 @@ alwaysApply: false
 ## Components
 
 - Use existing UI primitives from `src/shared/components/ui` before creating new styled elements. Currently available: `accordion`, `button`, `checkbox`, `combobox`, `dialog`, `drawer`, `dropdown-menu`, `empty`, `input`, `input-group`, `popover`, `progress`, `resizable`, `select`, `slider`, `spinner`, `textarea`.
-- If a primitive is missing (Card, Table, Badge, Tabs, Tooltip, Pagination, etc.), add it via the shadcn CLI/registry in the project's `new-york` style instead of hand-rolling a one-off component.
+- If a primitive is missing (Card, Table, Badge, Tabs, Tooltip, Pagination, etc.), add it with `npx shadcn@latest add <name>` (project style `new-york`) instead of hand-rolling a one-off component.
 - Use component variants (`variant`, `size`) before adding one-off Tailwind overrides.
 - If a reusable UI pattern appears more than once, move it to `src/shared/components` or the owning module's `components` folder.
 
 ## Styling
 
-- Use semantic tokens from `src/shared/styles/globals.css` such as `bg-primary`, `bg-primary-deep`, `text-title`, `text-muted-foreground`, `bg-background`, `text-primary-foreground`, `text-secondary`, `border-border`, `bg-success`, `bg-success-muted`, and `text-destructive`.
-- Palette scales are available as `stone-*`, `neutral-*`, `green-*`, `red-*`, and `gray-*` (aliased to `neutral-*`) utilities in the `@theme` block.
-- Prefer Tailwind's built-in utility classes over arbitrary values; use a default class when one exists (e.g. `container` instead of `max-w-[1280px]`, `inset-0` instead of `top-[0px] left-[0px]`, `mt-4` instead of `mt-[16px]`). Reach for arbitrary values like `w-[]` or `max-w-[]` only when no default utility or token fits.
-- Use `cn()` for conditional classes instead of ternaries or string concatenation inside `className`.
-- Prefer `gap-*` over `space-x-*` / `space-y-*`.
+- Use semantic tokens from `src/shared/styles/globals.css`: `bg-background`, `text-foreground`, `text-title`, `text-muted-foreground`, `bg-muted`, `bg-primary` / `text-primary-foreground`, `bg-primary-deep`, `bg-secondary` / `text-secondary-foreground` (neutral surface), `bg-accent`, `text-destructive` / `bg-destructive`, `bg-success`, `bg-success-muted` / `text-success-muted-foreground`, `border-border`, `border-input`, `ring-ring`.
+- Palette scales `stone-*`, `neutral-*`, `green-*`, `red-*` (50–950) are project-defined, and `gray-*` aliases `neutral-*`. Prefer tokens; use palette steps only when no token fits.
+- Text tokens meet WCAG AA contrast. Do not put body text in lighter colors than `text-muted-foreground`, and check contrast when adding or changing tokens.
+- Dark mode is the `.dark` class (`dark:` variant). No theme switcher is installed; ask before adding one (e.g. next-themes).
+- Animations use `tw-animate-css` (`animate-in`, `fade-in-0`, ...).
+- Prefer Tailwind's built-in utility classes over arbitrary values; use a default class when one exists (e.g. `container` instead of `max-w-[1280px]`, `inset-0` instead of `top-[0px] left-[0px]`, `mt-4` instead of `mt-[16px]`). Reach for arbitrary values only when no default utility or token fits.
+- Use `cn()` for conditional or combined classes instead of ternaries or template strings inside `className`.
+- Prefer `gap-*` over `space-x-*` / `space-y-*`, and `size-*` when width and height are equal.
 - Avoid long one-off `className` strings; extract repeated utility combinations into a shared class, variant, or small component.
-- For nested groups such as lists, prefer one parent class with child selectors (e.g. `[&>*]:...`) over repeating the same classes on every child.
-- Prefer `size-*` when width and height are equal.
+- For nested groups such as lists, prefer one parent class with child selectors (e.g. `[&>svg]:size-4`) over repeating the same classes on every child.
 - Avoid inline styles and raw color utilities unless no existing token/variant fits.
+
+## RTL Readiness
+
+- Use logical utilities so layouts flip for `dir="rtl"`: `ms-*`/`me-*`, `ps-*`/`pe-*`, `start-*`/`end-*`, `text-start`/`text-end`, `border-s`/`border-e`, `rounded-s-*`/`rounded-e-*`. Avoid `ml-*`, `pr-*`, `left-*`, `text-left` for directional spacing.
+- Mirror directional icons with `rtl:rotate-180` where needed.
 
 ## Accessibility
 
-- Use semantic HTML first.
+- Use semantic HTML first: one `h1` per page, no skipped heading levels, landmarks (`main`, `nav`, `footer`).
 - Interactive non-button elements need keyboard support, focus styles, and ARIA labels when the visible label is not enough.
 - Dialog, Drawer, and Popover-like components need accessible titles/labels.
+- Loading indicators need `role="status"` and an accessible label; decorative icons are `aria-hidden`.
 - Loading buttons should be disabled or otherwise prevent duplicate submissions.

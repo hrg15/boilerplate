@@ -14,7 +14,7 @@ import {
 import { Collapsible } from "radix-ui";
 import { cn } from "@/shared/lib/utils";
 import { PROJECT_TREE } from "../constants";
-import type { FileKind, TreeNode } from "../types";
+import type { FileKind, FolderNode, TreeNode } from "../types";
 import { getFileKind } from "../utils";
 
 const FILE_ICONS: Record<FileKind, LucideIcon> = {
@@ -25,38 +25,31 @@ const FILE_ICONS: Record<FileKind, LucideIcon> = {
   text: FileText,
 };
 
-const INDENT_STEP = 14;
+const rowClassName =
+  "flex w-full items-center gap-2 rounded-md py-1 ps-2 pe-2 text-start text-sm transition-colors hover:bg-muted [&>svg]:size-3.5 [&>svg]:shrink-0 [&>svg]:text-muted-foreground";
 
-type TreeItemProps = {
-  node: TreeNode;
-  depth?: number;
+type TreeRowContentProps = {
+  name: string;
+  description?: string;
 };
 
-const TreeItem = ({ node, depth = 0 }: TreeItemProps) => {
-  const [isOpen, setIsOpen] = useState(
-    node.type === "folder" ? (node.defaultOpen ?? false) : false,
-  );
+const TreeRowContent = ({ name, description }: TreeRowContentProps) => (
+  <>
+    <span className="truncate">{name}</span>
+    {description && (
+      <span className="ms-auto hidden shrink-0 ps-3 text-xs font-normal text-muted-foreground sm:block">
+        {description}
+      </span>
+    )}
+  </>
+);
 
-  const rowClassName =
-    "flex w-full items-center gap-2 rounded-md py-1 pr-2 text-left text-[13px] transition-colors hover:bg-muted";
-  const indent = { paddingLeft: depth * INDENT_STEP + 8 };
+type FolderItemProps = {
+  node: FolderNode;
+};
 
-  if (node.type === "file") {
-    const Icon = FILE_ICONS[getFileKind(node.name)];
-
-    return (
-      <div className={cn(rowClassName, "text-foreground")} style={indent}>
-        <Icon className="size-3.5 shrink-0 text-muted-foreground" />
-        <span className="truncate">{node.name}</span>
-        {node.description && (
-          <span className="ml-auto hidden shrink-0 pl-3 text-xs text-muted-foreground sm:block">
-            {node.description}
-          </span>
-        )}
-      </div>
-    );
-  }
-
+const FolderItem = ({ node }: FolderItemProps) => {
+  const [isOpen, setIsOpen] = useState(node.defaultOpen ?? false);
   const FolderIcon = isOpen ? FolderOpen : Folder;
 
   return (
@@ -66,30 +59,48 @@ const TreeItem = ({ node, depth = 0 }: TreeItemProps) => {
           rowClassName,
           "cursor-pointer font-medium text-title focus-visible:ring-[3px] focus-visible:ring-ring/50 focus-visible:outline-none",
         )}
-        style={indent}
       >
         <ChevronRight
           className={cn(
-            "size-3.5 shrink-0 text-muted-foreground transition-transform duration-150",
-            isOpen && "rotate-90",
+            "transition-transform duration-150 rtl:rotate-180",
+            isOpen && "rotate-90 rtl:rotate-90",
           )}
         />
-        <FolderIcon className="size-3.5 shrink-0 text-muted-foreground" />
-        <span className="truncate">{node.name}</span>
-        {node.description && (
-          <span className="ml-auto hidden shrink-0 pl-3 text-xs font-normal text-muted-foreground sm:block">
-            {node.description}
-          </span>
-        )}
+        <FolderIcon />
+        <TreeRowContent name={node.name} description={node.description} />
       </Collapsible.Trigger>
-      <Collapsible.Content>
-        {node.children.map((child) => (
-          <TreeItem key={child.name} node={child} depth={depth + 1} />
-        ))}
+      <Collapsible.Content className="ps-3.5">
+        <TreeList nodes={node.children} />
       </Collapsible.Content>
     </Collapsible.Root>
   );
 };
+
+type TreeItemProps = {
+  node: TreeNode;
+};
+
+const TreeItem = ({ node }: TreeItemProps) => {
+  if (node.type === "folder") {
+    return <FolderItem node={node} />;
+  }
+
+  const Icon = FILE_ICONS[getFileKind(node.name)];
+
+  return (
+    <div className={rowClassName}>
+      <Icon />
+      <TreeRowContent name={node.name} description={node.description} />
+    </div>
+  );
+};
+
+type TreeListProps = {
+  nodes: TreeNode[];
+};
+
+const TreeList = ({ nodes }: TreeListProps) =>
+  nodes.map((node) => <TreeItem key={node.name} node={node} />);
 
 export const FolderTree = () => (
   <div className="rounded-lg border border-border font-mono">
@@ -97,9 +108,7 @@ export const FolderTree = () => (
       project structure
     </div>
     <div className="p-2">
-      {PROJECT_TREE.map((node) => (
-        <TreeItem key={node.name} node={node} />
-      ))}
+      <TreeList nodes={PROJECT_TREE} />
     </div>
   </div>
 );

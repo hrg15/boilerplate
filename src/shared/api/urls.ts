@@ -1,10 +1,7 @@
 export const URLs = {
-  users: {
-    users: "/users",
-  },
   properties: {
     list: "/properties",
     map: "/properties/map",
-    detail: (id: string) => `/properties/${id}`,
+    detail: (id: string) => `/properties/${encodeURIComponent(id)}`,
   },
 } as const;

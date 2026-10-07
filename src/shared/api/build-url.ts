@@ -1,11 +1,8 @@
 import { BASE_API_URL } from "../../../config";
-import { QueryParams } from "./types";
+import type { QueryParams } from "./types";
 
 export const buildUrl = (path: string, params?: QueryParams) => {
-  const url = new URL(
-    path.replace(/^\//, ""),
-    `${BASE_API_URL.replace(/\/$/, "")}/`,
-  );
+  const url = new URL(path.replace(/^\/+/, ""), `${BASE_API_URL}/`);
 
   if (!params) {
     return url.toString();
@@ -17,7 +14,9 @@ export const buildUrl = (path: string, params?: QueryParams) => {
     }
 
     if (Array.isArray(value)) {
-      value.forEach((item) => url.searchParams.append(key, String(item)));
+      value
+        .filter((item) => item !== undefined && item !== null && item !== "")
+        .forEach((item) => url.searchParams.append(key, String(item)));
       return;
     }
 

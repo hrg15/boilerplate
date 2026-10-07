@@ -1,5 +1,5 @@
 ---
-description: Use when changing authentication, authorization, tokens, cookies, protected routes, forms, or user-submitted data
+description: Use when changing authentication, authorization, tokens, cookies, protected routes, forms, env vars, headers, or user-submitted data
 alwaysApply: false
 ---
 
@@ -7,12 +7,14 @@ alwaysApply: false
 
 ## Authentication
 
-- Auth is client-side. `useAuthStore` (`src/shared/store/auth-store.ts`) holds the token, and the Axios client (`src/shared/api/client.ts`) attaches it as a `Bearer` header in a request interceptor and clears it on 401.
+- Auth is client-side. `useAuthStore` (`src/shared/store/auth-store.ts`) holds `token` and `refreshToken`; the Axios client (`src/shared/api/client.ts`) attaches the token as a `Bearer` header and calls `clearTokens()` on 401.
 - Keep token and auth state behavior in those two files. Do not duplicate auth header logic in feature code, hooks, or module API files.
+- Tokens are persisted in `localStorage`, which any script on the page can read. This is a deliberate tradeoff for static rendering; keep XSS surface small (no `dangerouslySetInnerHTML` with untrusted data, no untrusted third-party scripts).
+- There is no token refresh flow. Ask before adding one or changing auth architecture, persistence strategy, cookie names, or storage.
 - The server side is the backend's responsibility. The backend may set and validate its own httpOnly cookie; the frontend does not read, write, or forward it.
 - Do not call `cookies()` or send credentials from `server.ts` request functions. Server fetching stays unauthenticated so routes remain SSG/ISR-capable.
 - Render authenticated UI on the client. If server-rendered per-user data is unavoidable, flag the loss of static rendering and confirm before implementing.
-- Treat 401/403 behavior as a shared concern and keep user-facing redirects or messages consistent.
+- Treat 401/403 behavior as a shared concern (`isUnauthorizedError`, `isForbiddenError`) and keep user-facing redirects or messages consistent.
 
 ## Input And Validation
 
@@ -22,7 +24,8 @@ alwaysApply: false
 
 ## Secrets And Safe Defaults
 
-- Never hardcode secrets, tokens, private keys, or production credentials.
-- Do not log sensitive values.
+- `NEXT_PUBLIC_*` variables are inlined into the client bundle. Never put secrets in them; document new variables in `.env.example`.
+- Never hardcode secrets, tokens, private keys, or production credentials, and never log sensitive values.
+- Security headers live in `next.config.ts`. Keep them when adding headers, and ask before adding a Content-Security-Policy (it needs nonces or hashes for Next.js scripts).
+- External links opened in a new tab use `rel="noopener noreferrer"`.
 - Prefer secure cookies and least-privilege data access.
-- Ask before changing auth architecture, persistence strategy, cookie names, or token refresh behavior.

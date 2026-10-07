@@ -1,6 +1,6 @@
 ---
-description: Next.js App Router page, layout, metadata, and data-fetching conventions
-globs: "src/app/**/*.tsx"
+description: Next.js App Router page, layout, special files, metadata, and data-fetching conventions
+globs: "src/app/**/*.ts,src/app/**/*.tsx,src/proxy.ts,next.config.ts"
 alwaysApply: false
 ---
 
@@ -8,22 +8,32 @@ alwaysApply: false
 
 ## Pages And Layouts
 
-- Keep route files thin. `page.tsx` and `layout.tsx` should compose sections from `src/modules` or `src/shared`, not contain large UI or business logic.
-- Export route components as a function named: `Page`, `Layout`, `Loading`, or `NotFound` with PascalCase where possible.
+- Keep route files thin. `page.tsx` and `layout.tsx` compose sections from `src/modules` or `src/shared`; they do not contain large UI or business logic.
+- Name route components `Page`, `Layout`, `Loading`, `Error`, `GlobalError`, or `NotFound`.
 - Use Server Components by default. Add `"use client"` only when the file needs state, effects, event handlers, browser APIs, or client-only hooks.
 - Split complex pages into clear sections/components under the relevant `src/modules/<feature>/components` folder.
+
+## Special Files
+
+- `error.tsx` and `global-error.tsx` are Client Components that receive `{ error, retry }` (Next.js 16.4 — not `reset`). Reuse `ErrorFallback` from `src/shared/components/error-fallback.tsx`.
+- `global-error.tsx` renders its own `<html>`/`<body>` and must import `globals.css` itself.
+- `not-found.tsx` handles unknown routes and `notFound()` calls; mark it `robots: { index: false }`.
+- Add a segment-level `loading.tsx` / `error.tsx` when a route has its own data and failure modes.
+- `src/proxy.ts` (formerly middleware) runs only on paths in its `matcher`. Keep static assets, `_next`, and metadata files excluded, and keep it free of auth cookie reads.
 
 ## Data And Rendering
 
 - Fetch server-side data through the owning resource's `server.ts` (in `src/modules/<feature>/api/`, or `src/shared/api/<resource>/` when shared), not with raw `fetch` inside route files.
 - Keep route-level fetching unauthenticated and cookie-free so pages stay SSG/ISR-capable. Authenticated data belongs in client components via React Query.
-- Avoid client fetching in route components unless the UX requires client state or live interactions. When a client component needs server-warmed data, prefetch with `getQueryClient()` and hydrate.
-- Render mode (SSG/SSR/ISR/dynamic), cache/revalidate behavior, and the Metadata API are covered in `performance-seo`. Follow that rule when choosing freshness and SEO behavior for a route.
+- Avoid client fetching in route components unless the UX requires client state or live interactions. When a client component needs server-warmed data, prefetch with `getQueryClient()` and hydrate with `HydrationBoundary`.
+- Cache Components is disabled: do not export `instant` or use `"use cache"`. Use `export const revalidate = <seconds>` or per-request `revalidate`/`tags` instead.
+- For dynamic segments, use `generateStaticParams` + `revalidate` (ISR) for public pages, and call `notFound()` when `isNotFoundError(error)`.
+- Render mode, freshness, and metadata are covered in `performance-seo`.
 
 ## Navigation
 
-- Use `ROUTES` from `src/shared/constants/routes.ts` for links to main app pages instead of hardcoding paths. Add a new entry there when a new top-level route is introduced.
+- Use `next/link` for internal navigation and `ROUTES` from `src/shared/constants/routes.ts` for paths. Add an entry when a new top-level route is introduced; use a function for dynamic routes (``detail: (slug: string) => `/properties/${slug}` ``).
 
 ## Tooling
 
-- When you need Next.js framework or API documentation, or runtime info about the running app, you may use the Next.js DevTools MCP (`Next Devtools`).
+- The Next.js DevTools MCP (`next-devtools`, configured in `.mcp.json` / `.cursor/mcp.json`) and the bundled docs in `node_modules/next/dist/docs` are the source of truth for framework APIs.

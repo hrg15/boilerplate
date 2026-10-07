@@ -1,5 +1,17 @@
-import { ExternalLink, Github, Layers, Rocket, ShieldCheck } from "lucide-react";
-import type { Feature, HomeLink, StackItem, TreeNode } from "./types";
+import {
+  ExternalLink,
+  Github,
+  Layers,
+  Rocket,
+  ShieldCheck,
+} from "lucide-react";
+import type {
+  Feature,
+  FooterLink,
+  HomeLink,
+  StackItem,
+  TreeNode,
+} from "./types";
 
 export const DEMO_URL = "https://boilerplate-hrg.vercel.app/";
 export const REPO_URL = "https://github.com/hrg15/boilerplate";
@@ -38,9 +50,45 @@ export const STACK: StackItem[] = [
 ];
 
 export const HOME_LINKS: HomeLink[] = [
-  { label: "Live demo", href: DEMO_URL, icon: ExternalLink, variant: "default" },
+  {
+    label: "Live demo",
+    href: DEMO_URL,
+    icon: ExternalLink,
+    variant: "default",
+  },
   { label: "View on GitHub", href: REPO_URL, icon: Github, variant: "outline" },
   { label: "Deploy now", href: DEPLOY_URL, icon: Rocket, variant: "outline" },
+];
+
+export const FOOTER_LINKS: FooterLink[] = [
+  { label: "Source code", href: REPO_URL },
+  { label: "Live demo", href: DEMO_URL },
+];
+
+const file = (name: string, description?: string): TreeNode => ({
+  name,
+  type: "file",
+  description,
+});
+
+const UI_PRIMITIVES = [
+  "accordion",
+  "button",
+  "checkbox",
+  "combobox",
+  "dialog",
+  "drawer",
+  "dropdown-menu",
+  "empty",
+  "input",
+  "input-group",
+  "popover",
+  "progress",
+  "resizable",
+  "select",
+  "slider",
+  "spinner",
+  "textarea",
 ];
 
 export const PROJECT_TREE: TreeNode[] = [
@@ -55,12 +103,15 @@ export const PROJECT_TREE: TreeNode[] = [
         description: "App Router",
         defaultOpen: true,
         children: [
-          { name: "layout.tsx", type: "file", description: "Root layout" },
-          { name: "page.tsx", type: "file", description: "Home page" },
-          { name: "loading.tsx", type: "file", description: "Loading UI" },
-          { name: "manifest.ts", type: "file", description: "Web manifest" },
-          { name: "robots.ts", type: "file", description: "robots.txt" },
-          { name: "sitemap.ts", type: "file", description: "Sitemap" },
+          file("layout.tsx", "Root layout + metadata"),
+          file("page.tsx", "Home page"),
+          file("loading.tsx", "Loading UI"),
+          file("error.tsx", "Error boundary"),
+          file("global-error.tsx", "Root error boundary"),
+          file("not-found.tsx", "404 page"),
+          file("manifest.ts", "Web manifest"),
+          file("robots.ts", "robots.txt"),
+          file("sitemap.ts", "Sitemap"),
         ],
       },
       {
@@ -77,16 +128,18 @@ export const PROJECT_TREE: TreeNode[] = [
                 name: "components/",
                 type: "folder",
                 children: [
-                  {
-                    name: "folder-tree.tsx",
-                    type: "file",
-                    description: "This component",
-                  },
+                  file("hero.tsx"),
+                  file("feature-list.tsx"),
+                  file("stack-list.tsx"),
+                  file("project-structure.tsx"),
+                  file("folder-tree.tsx", "This component"),
+                  file("home-section.tsx"),
+                  file("home-footer.tsx"),
                 ],
               },
-              { name: "constants.ts", type: "file", description: "Page data" },
-              { name: "types.ts", type: "file" },
-              { name: "utils.ts", type: "file" },
+              file("constants.ts", "Page data"),
+              file("types.ts"),
+              file("utils.ts"),
             ],
           },
         ],
@@ -102,46 +155,33 @@ export const PROJECT_TREE: TreeNode[] = [
             type: "folder",
             description: "API layer",
             children: [
-              {
-                name: "api-error.ts",
-                type: "file",
-                description: "Error class + guards",
-              },
-              { name: "build-url.ts", type: "file", description: "URL builder" },
-              { name: "client.ts", type: "file", description: "Axios client" },
-              {
-                name: "query-client.ts",
-                type: "file",
-                description: "React Query setup",
-              },
-              { name: "types.ts", type: "file" },
-              { name: "urls.ts", type: "file", description: "Endpoint paths" },
+              file("api-error.ts", "Error class + guards"),
+              file("build-url.ts", "URL builder"),
+              file("client.ts", "Axios client"),
+              file("query-client.ts", "React Query setup"),
+              file("types.ts"),
+              file("urls.ts", "Endpoint paths"),
               {
                 name: "http/",
                 type: "folder",
-                children: [
-                  {
-                    name: "server.ts",
-                    type: "file",
-                    description: "serverFetch",
-                  },
-                ],
+                children: [file("server.ts", "serverFetch")],
               },
               {
                 name: "properties/",
                 type: "folder",
-                description: "Example resource",
+                description: "Reference resource",
                 children: [
-                  { name: "types.ts", type: "file" },
-                  { name: "server.ts", type: "file" },
+                  file("types.ts"),
+                  file("keys.ts", "Query keys"),
+                  file("server.ts"),
                   {
                     name: "hooks/",
                     type: "folder",
                     children: [
-                      { name: "use-properties.ts", type: "file" },
-                      { name: "use-properties-map.ts", type: "file" },
-                      { name: "use-property.ts", type: "file" },
-                      { name: "use-property-mutations.ts", type: "file" },
+                      file("use-properties.ts"),
+                      file("use-properties-map.ts"),
+                      file("use-property.ts"),
+                      file("use-property-mutations.ts"),
                     ],
                   },
                 ],
@@ -152,90 +192,53 @@ export const PROJECT_TREE: TreeNode[] = [
             name: "components/",
             type: "folder",
             children: [
-              {
-                name: "provider.tsx",
-                type: "file",
-                description: "App providers",
-              },
+              file("provider.tsx", "App providers"),
               {
                 name: "ui/",
                 type: "folder",
                 description: "shadcn/ui primitives",
-                children: [
-                  { name: "accordion.tsx", type: "file" },
-                  { name: "button.tsx", type: "file" },
-                  { name: "checkbox.tsx", type: "file" },
-                  { name: "combobox.tsx", type: "file" },
-                  { name: "dialog.tsx", type: "file" },
-                  { name: "drawer.tsx", type: "file" },
-                  { name: "dropdown-menu.tsx", type: "file" },
-                  { name: "empty.tsx", type: "file" },
-                  { name: "input.tsx", type: "file" },
-                  { name: "input-group.tsx", type: "file" },
-                  { name: "popover.tsx", type: "file" },
-                  { name: "progress.tsx", type: "file" },
-                  { name: "resizable.tsx", type: "file" },
-                  { name: "select.tsx", type: "file" },
-                  { name: "slider.tsx", type: "file" },
-                  { name: "spinner.tsx", type: "file" },
-                  { name: "textarea.tsx", type: "file" },
-                ],
+                children: UI_PRIMITIVES.map((name) => file(`${name}.tsx`)),
               },
             ],
           },
           {
             name: "constants/",
             type: "folder",
-            children: [
-              { name: "routes.ts", type: "file", description: "ROUTES map" },
-            ],
+            children: [file("routes.ts", "ROUTES map")],
           },
           {
             name: "hooks/",
             type: "folder",
-            children: [{ name: "use-copy.ts", type: "file" }],
+            children: [file("use-copy.ts")],
           },
           {
             name: "icons/",
             type: "folder",
-            children: [{ name: "three-dots-loading.tsx", type: "file" }],
+            children: [file("three-dots-loading.tsx")],
           },
           {
             name: "lib/",
             type: "folder",
-            children: [
-              { name: "utils.ts", type: "file", description: "cn() helper" },
-            ],
+            children: [file("utils.ts", "cn() helper")],
           },
           {
             name: "store/",
             type: "folder",
-            children: [
-              {
-                name: "auth-store.ts",
-                type: "file",
-                description: "Zustand auth",
-              },
-            ],
+            children: [file("auth-store.ts", "Zustand auth")],
           },
           {
             name: "styles/",
             type: "folder",
-            children: [
-              {
-                name: "globals.css",
-                type: "file",
-                description: "Design tokens",
-              },
-            ],
+            children: [file("globals.css", "Design tokens")],
           },
         ],
       },
+      file("proxy.ts", "Request proxy"),
     ],
   },
-  { name: "config.ts", type: "file", description: "Base URLs" },
-  { name: "components.json", type: "file", description: "shadcn config" },
-  { name: "next.config.ts", type: "file" },
-  { name: "package.json", type: "file" },
-  { name: "tsconfig.json", type: "file" },
+  file("config.ts", "Base URLs"),
+  file("components.json", "shadcn config"),
+  file("next.config.ts", "Security headers"),
+  file("package.json"),
+  file("tsconfig.json"),
 ];

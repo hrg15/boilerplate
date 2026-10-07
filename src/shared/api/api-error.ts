@@ -6,6 +6,9 @@ export type ApiHttpErrorInit = {
   message?: string;
 };
 
+export const NETWORK_ERROR_STATUS = 0;
+export const TIMEOUT_ERROR_STATUS = 408;
+
 export class ApiHttpError extends Error {
   readonly status: number;
   readonly statusText: string;
@@ -19,7 +22,7 @@ export class ApiHttpError extends Error {
     body,
     message,
   }: ApiHttpErrorInit) {
-    super(message ?? resolveErrorMessage(status, body) ?? `HTTP ${status}`);
+    super(message ?? resolveErrorMessage(body) ?? `HTTP ${status}`);
     this.name = "ApiHttpError";
     this.status = status;
     this.statusText = statusText;
@@ -28,34 +31,23 @@ export class ApiHttpError extends Error {
   }
 
   static async fromResponse(response: Response, path: string) {
-    let body: unknown = null;
-    try {
-      body = await response.json();
-    } catch {
-      body = null;
-    }
-
     return new ApiHttpError({
       status: response.status,
       statusText: response.statusText,
       path,
-      body,
+      body: await readJsonBody(response),
     });
   }
 
-  static fromNetwork(error: unknown, path: string) {
-    const isTimeout = error instanceof Error && error.name === "TimeoutError";
+  static fromNetwork(error: unknown, path: string, isTimeout = false) {
+    const hasTimedOut =
+      isTimeout || (error instanceof Error && error.name === "TimeoutError");
 
     return new ApiHttpError({
-      status: isTimeout ? 408 : 0,
-      statusText: isTimeout ? "Request Timeout" : "Network Error",
+      status: hasTimedOut ? TIMEOUT_ERROR_STATUS : NETWORK_ERROR_STATUS,
+      statusText: hasTimedOut ? "Request Timeout" : "Network Error",
       path,
-      message:
-        error instanceof Error
-          ? error.message
-          : isTimeout
-            ? "Request timed out"
-            : "Network request failed",
+      message: hasTimedOut ? "Request timed out" : "Network request failed",
     });
   }
 }
@@ -69,10 +61,26 @@ export const isNotFoundError = (error: unknown): boolean =>
 export const isUnauthorizedError = (error: unknown): boolean =>
   isApiHttpError(error) && error.status === 401;
 
-const resolveErrorMessage = (
-  status: number,
-  body: unknown,
-): string | undefined => {
+export const isForbiddenError = (error: unknown): boolean =>
+  isApiHttpError(error) && error.status === 403;
+
+export const isClientError = (error: unknown): boolean =>
+  isApiHttpError(error) &&
+  error.status >= 400 &&
+  error.status < 500 &&
+  error.status !== TIMEOUT_ERROR_STATUS &&
+  error.status !== 429;
+
+export const readJsonBody = async (response: Response): Promise<unknown> => {
+  try {
+    const text = await response.text();
+    return text ? JSON.parse(text) : null;
+  } catch {
+    return null;
+  }
+};
+
+const resolveErrorMessage = (body: unknown): string | undefined => {
   if (!body || typeof body !== "object") return undefined;
 
   if ("message" in body && typeof body.message === "string") {
@@ -83,5 +91,5 @@ const resolveErrorMessage = (
     return body.error;
   }
 
-  return `HTTP ${status}`;
+  return undefined;
 };

@@ -1,30 +1,43 @@
-import { serverFetch } from "../http/server";
+import { serverFetch, type ServerFetchOptions } from "../http/server";
 import { URLs } from "../urls";
 import type {
-  Property,
   PropertyListResponse,
-  PropertyMapPin,
   PropertyMapResponse,
   PropertyResponse,
   PropertySearchParams,
 } from "./types";
 
-type CacheOptions = {
-  revalidate?: number | false;
-  tags?: string[];
-  cache?: RequestCache;
-};
+type CacheOptions = Pick<ServerFetchOptions, "revalidate" | "tags" | "cache">;
+
+const LIST_REVALIDATE_SECONDS = 3600;
+const MAP_REVALIDATE_SECONDS = 300;
+const DETAIL_REVALIDATE_SECONDS = 3600;
+
+const resolveCacheOptions = (
+  options: CacheOptions,
+  defaults: Required<Pick<CacheOptions, "revalidate" | "tags">>,
+): CacheOptions => ({
+  cache: options.cache,
+  tags: options.tags ?? defaults.tags,
+  revalidate: options.cache
+    ? options.revalidate
+    : (options.revalidate ?? defaults.revalidate),
+});
 
 export const getProperties = async (
   params?: PropertySearchParams,
   options: CacheOptions = {},
 ) => {
-  const response = await serverFetch<PropertyListResponse>(URLs.properties.list, {
-    params,
-    revalidate: options.revalidate ?? 3600,
-    tags: options.tags ?? ["properties", "properties-list"],
-    cache: options.cache,
-  });
+  const response = await serverFetch<PropertyListResponse>(
+    URLs.properties.list,
+    {
+      params,
+      ...resolveCacheOptions(options, {
+        revalidate: LIST_REVALIDATE_SECONDS,
+        tags: ["properties", "properties-list"],
+      }),
+    },
+  );
   return response.data;
 };
 
@@ -34,9 +47,10 @@ export const getPropertiesForMap = async (
 ) => {
   const response = await serverFetch<PropertyMapResponse>(URLs.properties.map, {
     params,
-    revalidate: options.revalidate ?? 300,
-    tags: options.tags ?? ["properties", "properties-map"],
-    cache: options.cache,
+    ...resolveCacheOptions(options, {
+      revalidate: MAP_REVALIDATE_SECONDS,
+      tags: ["properties", "properties-map"],
+    }),
   });
   return response.data;
 };
@@ -47,13 +61,10 @@ export const getPropertyById = async (
 ) => {
   const response = await serverFetch<PropertyResponse>(
     URLs.properties.detail(id),
-    {
-      revalidate: options.revalidate ?? 3600,
-      tags: options.tags ?? ["properties", `property-${id}`],
-      cache: options.cache,
-    },
+    resolveCacheOptions(options, {
+      revalidate: DETAIL_REVALIDATE_SECONDS,
+      tags: ["properties", `property-${id}`],
+    }),
   );
   return response.data;
 };
-
-export type { Property, PropertyMapPin, PropertySearchParams };

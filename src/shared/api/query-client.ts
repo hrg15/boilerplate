@@ -3,28 +3,17 @@ import {
   defaultShouldDehydrateQuery,
   isServer,
 } from "@tanstack/react-query";
-import { AxiosError } from "axios";
-import { isApiHttpError } from "./api-error";
+import { isClientError } from "./api-error";
+
+const MAX_RETRIES = 3;
 
 const makeQueryClient = () =>
   new QueryClient({
     defaultOptions: {
       queries: {
         staleTime: 60 * 1000,
-        retry: (failureCount, error) => {
-          if (isApiHttpError(error)) {
-            if (error.status === 401 || error.status >= 500) return false;
-          }
-
-          if (error instanceof AxiosError) {
-            const status = error.response?.status;
-            if (status === 401 || (status !== undefined && status >= 500)) {
-              return false;
-            }
-          }
-
-          return failureCount < 3;
-        },
+        retry: (failureCount, error) =>
+          !isClientError(error) && failureCount < MAX_RETRIES,
       },
       dehydrate: {
         shouldDehydrateQuery: (query) =>

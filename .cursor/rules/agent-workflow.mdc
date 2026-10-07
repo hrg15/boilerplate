@@ -10,15 +10,17 @@ alwaysApply: true
 - Read the relevant existing files first and follow the local pattern.
 - If requirements are unclear, ask a focused question before writing code.
 - If there may not be one correct answer, say so and explain the tradeoff.
+- Check the installed Next.js docs in `node_modules/next/dist/docs` (or the Next.js DevTools MCP) before using a framework API you are unsure about; APIs change between minor versions (e.g. `error.tsx` receives `retry`, not `reset`, in 16.4).
 
 ## Implementation Style
 
 - Prefer simple, readable code over clever abstractions.
-- Use descriptive names. Event handlers should use the `handle` prefix, such as `handleClick`, `handleSubmit`, or `handleKeyDown`.
+- Use descriptive names. Event handlers use the `handle` prefix (`handleClick`, `handleSubmit`); props that receive them use the `on` prefix.
 - Use early returns and guard clauses for invalid states.
 - Avoid large files and deeply nested logic. Extract reusable UI, hooks, helpers, constants, or types when a component becomes hard to scan.
 - For repetitive UI/data, define an array or constant and map over it instead of duplicating markup.
-- Prefer typed `const` arrow functions for local callbacks and helpers. Use function declarations only for pages and when they fit the existing file style or framework convention.
+- Prefer typed `const` arrow functions for components, local callbacks, and helpers. Use function declarations for route files (`Page`, `Layout`, ...) and where they fit the existing file style.
+- Treat `src/shared/components/ui` as vendored shadcn code: it uses function declarations and no semicolons. Do not restyle or reformat it; only change it for a real behavior or token fix.
 
 ## Review
 

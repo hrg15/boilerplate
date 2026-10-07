@@ -1,60 +1,61 @@
-import type { Metadata } from "next";
-import { Inter, Vazirmatn } from "next/font/google";
+import type { Metadata, Viewport } from "next";
+import { Inter } from "next/font/google";
 import "../shared/styles/globals.css";
 import { BASE_URL } from "../../config";
 import Provider from "@/shared/components/provider";
-
-// @next-codemod-ignore Cache Components adoption: this segment temporarily allows blocking.
-// Remove this opt-out after verifying the segment passes validation without it.
-// See: https://nextjs.org/docs/app/guides/migrating-to-cache-components
-export const instant = false;
+import { cn } from "@/shared/lib/utils";
 
 const inter = Inter({
-  subsets: ["vietnamese"],
-  weight: ["100", "200", "300", "400", "500", "600", "700", "800", "900"],
+  subsets: ["latin"],
   variable: "--font-inter",
   display: "swap",
 });
 
+// For Persian/Arabic projects, swap Inter for Vazirmatn and set <html lang="fa" dir="rtl">:
 // const vazirmatn = Vazirmatn({
-//   subsets: ["latin-ext"],
-//   weight: ["100", "200", "300", "400", "500", "600", "700", "800", "900"],
+//   subsets: ["arabic", "latin"],
 //   variable: "--font-vazir",
 //   display: "swap",
 // });
 
+const SITE_NAME = "Next.js Boilerplate";
+const SITE_DESCRIPTION =
+  "An opinionated Next.js starter with the App Router, TypeScript, Tailwind CSS, React Query, Zustand, and a typed API layer.";
+const OG_IMAGE = {
+  url: "/logo.png",
+  width: 1089,
+  height: 1067,
+  alt: `${SITE_NAME} logo`,
+};
+
 export const metadata: Metadata = {
+  metadataBase: new URL(BASE_URL),
   title: {
-    default: "Next js Boilerplate",
-    template: "%s | HRG",
+    default: SITE_NAME,
+    template: `%s | ${SITE_NAME}`,
   },
-  description:
-    "An opinionated Next.js starter with the App Router, TypeScript, Tailwind CSS, React Query, Zustand, and a typed API layer.",
+  description: SITE_DESCRIPTION,
+  applicationName: SITE_NAME,
   openGraph: {
-    title: "Next js Boilerplate",
-    description: "Next js Boilerplate created by HRG",
+    title: SITE_NAME,
+    description: SITE_DESCRIPTION,
     type: "website",
-    images: [
-      {
-        url: `${BASE_URL}/logo.png`,
-        alt: "Next js Boilerplate Logo",
-      },
-    ],
-    siteName: "Next js Boilerplate",
+    siteName: SITE_NAME,
+    images: [OG_IMAGE],
   },
   twitter: {
-    card: "summary_large_image",
-    title: "Next js Boilerplate",
-    description: "Next js Boilerplate created by HRG",
-    images: [`${BASE_URL}/logo.png`],
+    card: "summary",
+    title: SITE_NAME,
+    description: SITE_DESCRIPTION,
+    images: [OG_IMAGE.url],
   },
   icons: {
-    icon: `${BASE_URL}/logo.png`,
-    apple: `${BASE_URL}/logo.png`,
+    apple: "/logo.png",
   },
-  alternates: {
-    canonical: `${BASE_URL}/`,
-  },
+};
+
+export const viewport: Viewport = {
+  themeColor: "#ffffff",
 };
 
 export default function RootLayout({
@@ -64,7 +65,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={`${inter.className} ${inter.variable} antialiased`}>
+      <body className={cn(inter.className, inter.variable, "antialiased")}>
         <Provider>{children}</Provider>
       </body>
     </html>

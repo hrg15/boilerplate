@@ -4,42 +4,53 @@ import { immer } from "zustand/middleware/immer";
 
 const STORE_NAME = "AUTH";
 
-interface IState {
+type AuthState = {
   token: string;
   refreshToken: string;
   setToken: (token: string) => void;
-  setRefreshToken: (token: string) => void;
-}
+  setRefreshToken: (refreshToken: string) => void;
+  clearTokens: () => void;
+};
 
-const useAuthStore = create<IState>()(
-  immer(
-    devtools(
-      persist(
-        (set) => ({
-          token: "",
-          refreshToken: "",
+const useAuthStore = create<AuthState>()(
+  devtools(
+    persist(
+      immer((set) => ({
+        token: "",
+        refreshToken: "",
 
-          setToken: (token: string) =>
-            set(
-              (state) => {
-                state.token = token;
-              },
-              false,
-              "setToken",
-            ),
-          setRefreshToken: (token: string) =>
-            set(
-              (state) => {
-                state.refreshToken = token;
-              },
-              false,
-              "setRefreshToken",
-            ),
-        }),
-        { name: STORE_NAME },
-      ),
-      { name: STORE_NAME },
+        setToken: (token) =>
+          set(
+            (state) => {
+              state.token = token;
+            },
+            false,
+            "setToken",
+          ),
+        setRefreshToken: (refreshToken) =>
+          set(
+            (state) => {
+              state.refreshToken = refreshToken;
+            },
+            false,
+            "setRefreshToken",
+          ),
+        clearTokens: () =>
+          set(
+            (state) => {
+              state.token = "";
+              state.refreshToken = "";
+            },
+            false,
+            "clearTokens",
+          ),
+      })),
+      {
+        name: STORE_NAME,
+        partialize: ({ token, refreshToken }) => ({ token, refreshToken }),
+      },
     ),
+    { name: STORE_NAME, enabled: process.env.NODE_ENV !== "production" },
   ),
 );
 

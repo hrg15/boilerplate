@@ -35,3 +35,5 @@ export type HomeLink = {
   icon: LucideIcon;
   variant: "default" | "outline";
 };
+
+export type FooterLink = Pick<HomeLink, "label" | "href">;

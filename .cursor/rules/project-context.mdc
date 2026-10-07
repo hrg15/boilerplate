@@ -5,7 +5,9 @@ alwaysApply: true
 
 # Project Context
 
-This is a Next.js 16 App Router project (React 19, Turbopack) using TypeScript, Tailwind CSS v4, shadcn-style primitives built on Radix UI and Base UI, TanStack React Query, Zustand, Axios, CVA, and `cn()` from `src/shared/lib/utils.ts`.
+This is a Next.js 16 App Router project (React 19, Turbopack, Node >= 20.9) using TypeScript, Tailwind CSS v4, shadcn-style primitives built on Radix UI and Base UI, TanStack React Query, Zustand (with immer), Axios, CVA, and `cn()` from `src/shared/lib/utils.ts`.
+
+Cache Components (`cacheComponents`) is **not** enabled. Do not add `"use cache"`, `cacheLife`, `cacheTag`, or the `instant` segment export — they fail the build. Control freshness with `fetch` options (`cache`, `revalidate`, `tags`) through `serverFetch`, and with `revalidateTag` / `revalidatePath`. Ask before enabling Cache Components.
 
 ## Non-Negotiables
 
@@ -15,10 +17,12 @@ This is a Next.js 16 App Router project (React 19, Turbopack) using TypeScript, 
 - Reference main app pages via `ROUTES` in `src/shared/constants/routes.ts` and API endpoints via `URLs` in `src/shared/api/urls.ts` instead of hardcoding paths.
 - Read `BASE_URL` / `BASE_API_URL` from the root `config.ts` instead of reading `process.env` directly in feature code.
 - Use lowercase kebab-case for folders and files unless the framework requires another convention.
-- Ask before installing packages, adding Framer Motion, changing API strategy, or introducing a new global state/store pattern.
+- Ask before installing packages, adding Framer Motion, changing API strategy, enabling Cache Components, or introducing a new global state/store pattern.
 - Do not add comments or documentation unless requested or the code would otherwise be hard to understand.
 
 ## Verification
 
-- Prefer `npm run lint` and `npm run type-check` when the change is broad or touches shared behavior.
+- Run `npm run lint` and `npm run type-check` for any non-trivial change, and `npm run build` when touching routes, `next.config.ts`, metadata, or segment config — some Next.js errors only appear at build time.
+- `npm run format` runs Prettier (with Tailwind class sorting). `src/shared/components/ui` is excluded on purpose.
+- No test runner is installed. Ask before adding one.
 - If a command cannot be run, say so and explain the remaining risk.
