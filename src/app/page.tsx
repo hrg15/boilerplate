@@ -4,6 +4,11 @@ import { Hero } from "@/modules/home/components/hero";
 import { StackList } from "@/modules/home/components/stack-list";
 import { DEMO_URL, REPO_URL } from "@/modules/home/constants";
 
+// @next-codemod-ignore Cache Components adoption: this segment temporarily allows blocking.
+// Remove this opt-out after verifying the segment passes validation without it.
+// See: https://nextjs.org/docs/app/guides/migrating-to-cache-components
+export const instant = false;
+
 export default function Page() {
   return (
     <main className="mx-auto flex max-w-3xl flex-col gap-16 px-6 py-16 sm:py-24">
